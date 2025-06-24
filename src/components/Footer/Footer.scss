@@ -1,0 +1,43 @@
+@use '../../styles/variables' as variables;
+
+footer {
+  background-color: variables.$color-primario;
+  color: variables.$color-blanco;
+  padding: 1.5rem 1rem;
+  text-align: center;
+
+  .footer-content {
+    max-width: 1000px;
+    margin: 0 auto;
+
+    p {
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .footer-links {
+      margin-bottom: 1rem;
+
+      a {
+        color: variables.$color-blanco;
+        margin: 0 1rem;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .social-media {
+      a {
+        margin: 0 0.5rem;
+
+        img {
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+  }
+}

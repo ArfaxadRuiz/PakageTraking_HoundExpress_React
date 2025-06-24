@@ -1,0 +1,60 @@
+@use '../../styles/variables' as variables;
+@use '../../styles/mixins' as mixins;
+
+.registro-container {
+  background-color: variables.$color-fondo;
+  padding: 2rem;
+  border-radius: variables.$radio;
+  margin: 2rem auto;
+  max-width: 600px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.registro-container h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: variables.$color-primario;
+}
+
+.registro-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.registro-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  color: variables.$color-texto;
+}
+
+.registro-form input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: variables.$radio;
+  font-size: 1rem;
+}
+
+.registro-form button {
+  padding: 0.75rem;
+  background-color: variables.$color-primario;
+  color: variables.$color-blanco;
+  border: none;
+  border-radius: variables.$radio;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.registro-form select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: variables.$radio;
+  font-size: 1rem;
+  background-color: #fff;
+}
+
+.registro-form button:hover {
+  background-color: variables.$color-acento;
+}

@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
+import { useAppDispatch } from '../../store/hooks';
+import { agregarGuia, Guia } from '../../store/guidesSlice';
 import './RegistroGuia.scss';
 
-const RegistroGuia = ({ onRegistrar }) => {
-    const [formulario, setFormulario] = useState({
+const RegistroGuia = () => {
+
+    const dispatch = useAppDispatch();
+
+    const [formulario, setFormulario] = useState<Omit<Guia, 'historial'>>({
         numeroGuia: '',
         origen: '',
         destino: '',
@@ -11,39 +16,35 @@ const RegistroGuia = ({ onRegistrar }) => {
         estado: 'pendiente',
     });
 
-    const handleChange = (e) =>{
-        setFormulario({
-            ...formulario,
-            [e.target.name]: e.target.value,
-        });
-    }
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFormulario({ ...formulario, [name]: value });
+    };
 
-    const handleSubmit = (e) =>{
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        //aqui se trabaja con la guia
-        console.log( 'Guía registrada: ',formulario);
 
-        const nuevaGuia = {
-            ...formulario,
-            historial: [
-                {
-                    estado: formulario.estado,
-                    fecha: new Date().toLocaleString(),
-                },
-            ],
-        };
+        dispatch(
+            agregarGuia({
+                ...formulario,
+                historial: [
+                    {
+                        estado: formulario.estado,
+                        fecha: new Date().toLocaleString(),
+                    },
+                ],
+            })
+        );
 
-        onRegistrar(nuevaGuia);
-        //Limpiar formulario
         setFormulario({
-            numeroGuia: '',
-            origen: '',
-            destino: '',
-            destinatario: '',
-            fecha: '',
-            estado: 'pendiente',
-        })
-    }
+        numeroGuia: '',
+        origen: '',
+        destino: '',
+        destinatario: '',
+        fecha: '',
+        estado: 'pendiente',
+        });
+    };
 
     return(
         <section id="registro" className="registro-container">

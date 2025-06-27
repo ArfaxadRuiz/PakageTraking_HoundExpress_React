@@ -51,7 +51,7 @@ const RegistroGuia = () => {
             <h2>Registro de Guías</h2>
             <form onSubmit={handleSubmit} className="registro-form">
                 <label htmlFor="numero-guia">
-                    Numero de Guía :
+                    Numero de Guía:
                     <input
                         type="text"
                         id="numero-guia"

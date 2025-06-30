@@ -15,8 +15,6 @@ const Header = () => {
                         <li><a href="#registro">Registro de Guías</a></li>
                         <li><a href="#estado">Estado General</a></li>
                         <li><a href="#lista">Lista de Guías</a></li>
-                        <li><a href="#buscar">Buscar Guías</a></li>
-                        <li><a href="#historial">Historial de Guías</a></li>
                     </ul>
                 </nav>
             </section>

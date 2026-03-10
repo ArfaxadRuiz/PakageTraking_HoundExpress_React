@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './components/Header/Header';
+import Header from './components/Header/Header.jsx'
 import RegistroGuia from './components/RegistroGuia/RegistroGuia';
 import EstadoGeneral from './components/EstadoGeneral/EstadoGeneral';
 import ListaGuias from './components/ListaGuias/ListaGuias';

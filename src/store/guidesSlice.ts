@@ -63,6 +63,32 @@ export const actualizarGuia = createAsyncThunk(
   }
 );
 
+export const fetchHistorial = createAsyncThunk(
+  "guides/fetchHistorial",
+  async (guideId: number) => {
+
+    const response = await axios.get(
+      `http://127.0.0.1:8000/api/estatus/?guideId=${guideId}`
+    );
+
+    return response.data;
+  }
+);
+
+export const crearEstatus = createAsyncThunk(
+  "guides/crearEstatus",
+  async (estatus: any) => {
+
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/estatus/",
+      estatus
+    );
+
+    return response.data;
+  }
+);
+
+
 
 const guidesSlice = createSlice({
   name: 'guides',

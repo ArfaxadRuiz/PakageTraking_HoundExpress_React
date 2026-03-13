@@ -2,7 +2,9 @@ import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { actualizarEstado, fetchGuias } from '../../store/guidesSlice';
 import './ListaGuias.scss';
+import axios from "axios";
 import { actualizarGuia } from '../../store/guidesSlice';
+import { crearEstatus } from '../../store/guidesSlice';
 
 
 const formatearEstado = (estado: string) => {
@@ -25,37 +27,70 @@ const ListaGuias = () => {
   }, [dispatch]);
 
   const handleActualizar = (index: number) => {
-    const guia = guias[index];
-    let nuevoEstado = guia.estado;
-    if (guia.estado === "pendiente") nuevoEstado = "en-transito";
-    else if (guia.estado === "en-transito") nuevoEstado = "entregado";
-    const estadoAPI =
+
+  const guia = guias[index];
+
+  let nuevoEstado = guia.estado;
+
+  if (guia.estado === "pendiente") nuevoEstado = "en-transito";
+  else if (guia.estado === "en-transito") nuevoEstado = "entregado";
+
+  const estadoAPI =
     nuevoEstado === "pendiente"
       ? "CREATED"
       : nuevoEstado === "en-transito"
       ? "IN_TRANSIT"
       : "DELIVERED";
 
-    dispatch(
-      actualizarGuia({
-        id: guia.id,
-        currentStatus: estadoAPI,
-      })
-    );
+  dispatch(
+    actualizarGuia({
+      id: guia.id,
+      currentStatus: estadoAPI,
+    })
+  );
 
-    dispatch(actualizarEstado(index));
+  dispatch(
+    crearEstatus({
+      id: Date.now(),
+      guideId: guia.id,
+      status: estadoAPI,
+      updatedBy: "sistema"
+    })
+  );
+
+  dispatch(actualizarEstado(index));
+};
+
+
+
+  const verHistorial = async (index: number) => {
+
+  const guia = guias[index];
+
+    try {
+
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/estatus/?guideId=${guia.id}`
+      );
+
+      const historial = response.data;
+
+      if (historial.length === 0) {
+        alert("No hay historial para esta guía");
+        return;
+      }
+
+      const historialTexto = historial
+        .map((h: any) => `• ${h.status} - ${h.timestamp}`)
+        .join("\n");
+
+      alert(`Historial de la guía ${guia.numeroGuia}:\n\n${historialTexto}`);
+
+    } catch (error) {
+      console.error("Error obteniendo historial", error);
+    }
   };
 
-
-  const verHistorial = (index: number) => {
-    const guia = guias[index];
-
-    const historialTexto = guia.historial
-      .map((h) => `• ${formatearEstado(h.estado)} - ${h.fecha}`)
-      .join('\n');
-
-    alert(`Historial de la guía ${guia.numeroGuia}:\n\n${historialTexto}`);
-  };
 
   return (
     <section id="lista" className="lista-guias">

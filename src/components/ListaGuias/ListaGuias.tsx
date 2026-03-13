@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { actualizarEstado, fetchGuias } from '../../store/guidesSlice';
 import './ListaGuias.scss';
+import { actualizarGuia } from '../../store/guidesSlice';
+
 
 const formatearEstado = (estado: string) => {
   switch (estado) {
@@ -23,8 +25,27 @@ const ListaGuias = () => {
   }, [dispatch]);
 
   const handleActualizar = (index: number) => {
+    const guia = guias[index];
+    let nuevoEstado = guia.estado;
+    if (guia.estado === "pendiente") nuevoEstado = "en-transito";
+    else if (guia.estado === "en-transito") nuevoEstado = "entregado";
+    const estadoAPI =
+    nuevoEstado === "pendiente"
+      ? "CREATED"
+      : nuevoEstado === "en-transito"
+      ? "IN_TRANSIT"
+      : "DELIVERED";
+
+    dispatch(
+      actualizarGuia({
+        id: guia.id,
+        currentStatus: estadoAPI,
+      })
+    );
+
     dispatch(actualizarEstado(index));
   };
+
 
   const verHistorial = (index: number) => {
     const guia = guias[index];

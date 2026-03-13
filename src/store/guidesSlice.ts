@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 export type Guia = {
+  id: number;
   numeroGuia: string;
   origen: string;
   destino: string;
@@ -26,6 +27,7 @@ export const fetchGuias = createAsyncThunk('guides/fetchGuias', async () => {
 
   // Convertimos los datos del backend al formato que usa el frontend
   return response.data.map((g: any) => ({
+    id: g.id,
     numeroGuia: g.trackingNumber,
     origen: g.origin,
     destino: g.destination,
@@ -35,6 +37,31 @@ export const fetchGuias = createAsyncThunk('guides/fetchGuias', async () => {
     historial: [],
   }));
 });
+
+export const crearGuia = createAsyncThunk(
+  'guides/crearGuia',
+  async (guia: any) => {
+
+    const response = await axios.post(
+      'http://127.0.0.1:8000/api/guia/',
+      guia
+    );
+
+    return response.data;
+  }
+);
+
+export const actualizarGuia = createAsyncThunk(
+  "guides/actualizarGuia",
+  async ({ id, currentStatus }: { id: number; currentStatus: string }) => {
+    const response = await axios.patch(
+      `http://127.0.0.1:8000/api/guia/${id}/`,
+      { currentStatus }
+    );
+
+    return response.data;
+  }
+);
 
 
 const guidesSlice = createSlice({
@@ -68,10 +95,39 @@ const guidesSlice = createSlice({
 
   // recibir datos de la API
   extraReducers: (builder) => {
-    builder.addCase(fetchGuias.fulfilled, (state, action) => {
-      state.lista = action.payload;
+  builder.addCase(fetchGuias.fulfilled, (state, action) => {
+    state.lista = action.payload;
+  });
+
+  builder.addCase(crearGuia.fulfilled, (state, action) => {
+    const g = action.payload;
+
+    state.lista.push({
+      id: g.id,
+      numeroGuia: g.trackingNumber,
+      origen: g.origin,
+      destino: g.destination,
+      destinatario: '',
+      fecha: g.createdAt,
+      estado: g.currentStatus.toLowerCase(),
+      historial: [],
     });
-  },
+  });
+
+  builder.addCase(actualizarGuia.fulfilled, (state, action) => {
+  const guiaActualizada = action.payload;
+
+  const index = state.lista.findIndex(
+    (g) => g.numeroGuia === guiaActualizada.trackingNumber
+  );
+
+  if (index !== -1) {
+    state.lista[index].estado = guiaActualizada.currentStatus.toLowerCase();
+  }
+});
+
+},
+
 });
 
 export const { agregarGuia, actualizarEstado } = guidesSlice.actions;

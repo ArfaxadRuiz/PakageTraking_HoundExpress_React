@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useAppDispatch } from '../../store/hooks';
 import { agregarGuia, Guia } from '../../store/guidesSlice';
 import './RegistroGuia.scss';
+import { crearGuia } from '../../store/guidesSlice';
+
 
 const RegistroGuia = () => {
 
     const dispatch = useAppDispatch();
 
-    const [formulario, setFormulario] = useState<Omit<Guia, 'historial'>>({
+    const [formulario, setFormulario] = useState<Omit<Guia, 'id' | 'historial'>>({
         numeroGuia: '',
         origen: '',
         destino: '',
@@ -21,30 +23,31 @@ const RegistroGuia = () => {
         setFormulario({ ...formulario, [name]: value });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        dispatch(
-            agregarGuia({
-                ...formulario,
-                historial: [
-                    {
-                        estado: formulario.estado,
-                        fecha: new Date().toLocaleString(),
-                    },
-                ],
-            })
-        );
-
-        setFormulario({
-        numeroGuia: '',
-        origen: '',
-        destino: '',
-        destinatario: '',
-        fecha: '',
-        estado: 'pendiente',
-        });
+        const guiaAPI = {
+            id: Date.now(),
+            trackingNumber: formulario.numeroGuia,
+            origin: formulario.origen,
+            destination: formulario.destino,
+            currentStatus: formulario.estado.toUpperCase(),
+        };
+        
+        try {
+            await dispatch(crearGuia(guiaAPI));
+            setFormulario({
+                numeroGuia: '',
+                origen: '',
+                destino: '',
+                destinatario: '',
+                fecha: '',
+                estado: 'pendiente',
+            });
+        } catch (error) {
+            console.error("Error creando guía:", error);
+        }
     };
+
 
     return(
         <section id="registro" className="registro-container">
